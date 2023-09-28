@@ -1,9 +1,13 @@
 {
-  "name": "essentials-of-interpretation",
-  "version": "1.0.0",
-  "description": "Building an Interpreter from scratch",
-  "main": "index.js",
-  "repository": "git@github.com:yazaldefilimonepinto/essentials-of-interpretation.git",
-  "author": "Yazalde Filimone <yazaldefilimon@gmail.com>",
-  "license": "MIT"
+	"name": "essentials-of-interpretation",
+	"version": "1.0.0",
+	"description": "Building an Interpreter from scratch",
+	"main": "index.js",
+	"scripts": {
+		"start": "",
+		"test": "node --watch ./tests/run.js"
+	},
+	"repository": "git@github.com:yazaldefilimonepinto/essentials-of-interpretation.git",
+	"author": "Yazalde Filimone <yazaldefilimon@gmail.com>",
+	"license": "MIT"
 }
