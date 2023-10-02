@@ -13,14 +13,6 @@ const Environment = require('../src/environment');
 const package = require('../package.json');
 // Tests
 
-const internalEnv = [
-	['null', null],
-	['true', true],
-	['false', false],
-	['VERSION', package.version],
-];
-const table = new Map(internalEnv);
-const environment = new Environment(table);
-const evaluator = new Evaluator(environment);
+const evaluator = new Evaluator();
 tests.forEach((test) => test(evaluator));
 console.log('All tests passed!');
