@@ -9,5 +9,8 @@
 	},
 	"repository": "git@github.com:yazaldefilimonepinto/essentials-of-interpretation.git",
 	"author": "Yazalde Filimone <yazaldefilimon@gmail.com>",
-	"license": "MIT"
+	"license": "MIT",
+	"dependencies": {
+		"syntax-cli": "^0.1.27"
+	}
 }
