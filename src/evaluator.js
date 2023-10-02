@@ -1,43 +1,19 @@
 const Environment = require('./environment');
+const GlobalEnv = require('./internal');
 
 class Evaluator {
-	constructor(globalEnv = new Environment()) {
+	constructor(globalEnv = GlobalEnv) {
 		this.globalEnv = globalEnv;
 	}
 
 	eva(exp, env = this.globalEnv) {
-		if (isNumber(exp)) {
+		if (this._isNumber(exp)) {
 			return exp;
 		}
 
-		if (isString(exp)) {
+		if (this._isString(exp)) {
 			return exp.slice(1, -1);
 		}
-
-		// Math
-		if (exp[0] === '*') {
-			return this.eva(exp[1], env) * this.eva(exp[2], env);
-		}
-		if (exp[0] === '+') {
-			return this.eva(exp[1], env) + this.eva(exp[2], env);
-		}
-		if (exp[0] === '>') {
-			return this.eva(exp[1], env) > this.eva(exp[2], env);
-		}
-		if (exp[0] === '<') {
-			return this.eva(exp[1], env) < this.eva(exp[2], env);
-		}
-		// Compare
-		if (exp[0] === '>=') {
-			return this.eva(exp[1], env) >= this.eva(exp[2], env);
-		}
-		if (exp[0] === '<=') {
-			return this.eva(exp[1], env) <= this.eva(exp[2], env);
-		}
-		if (exp[0] === '=') {
-			return this.eva(exp[1], env) === this.eva(exp[2], env);
-		}
-
 		// Block: sequence of expressions
 		if (exp[0] === 'begin') {
 			const parentEnv = new Environment(new Map(), env);
@@ -55,7 +31,7 @@ class Evaluator {
 			return env.define(name, this.eva(value, env));
 		}
 
-		if (isVariableName(exp)) {
+		if (this._isVariableName(exp)) {
 			return env.lookup(exp);
 		}
 		// if exp
@@ -75,6 +51,15 @@ class Evaluator {
 			}
 			return result;
 		}
+		// functions calls
+
+		if (Array.isArray(exp)) {
+			const fn = this.eva(exp[0], env);
+			const args = exp.slice(1).map((ex) => this.eva(ex, env));
+			if (typeof fn === 'function') {
+				return fn(...args);
+			}
+		}
 
 		throw `Unimplemented: ${JSON.stringify(exp)}`;
 	}
@@ -83,18 +68,18 @@ class Evaluator {
 		const [_tag, ...expressions] = exp;
 		return expressions.reduce((_, exp) => this.eva(exp, env), null);
 	}
+	_isNumber(exp) {
+		return typeof exp === 'number';
+	}
+
+	_isString(exp) {
+		return typeof exp === 'string' && exp.at(0) == '"' && exp.at(-1) == '"';
+	}
+
+	_isVariableName(exp) {
+		return typeof exp === 'string' && /^[+\-*/<>=a-zA-Z0-9_]+$/.test(exp);
+	}
 }
 
-function isNumber(exp) {
-	return typeof exp === 'number';
-}
-
-function isString(exp) {
-	return typeof exp === 'string' && exp.at(0) == '"' && exp.at(-1) == '"';
-}
-
-function isVariableName(exp) {
-	return typeof exp === 'string' && /^[+\-*/<>=a-zA-Z0-9_]+$/.test(exp);
-}
 
 module.exports = Evaluator;
