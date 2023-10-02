@@ -1,8 +1,7 @@
 const Environment = require('./environment');
-const GlobalEnv = require('./internal');
-
+const package = require('../package.json');
 class Evaluator {
-	constructor(globalEnv = GlobalEnv) {
+	constructor(globalEnv = GlobalEnvironment) {
 		this.globalEnv = globalEnv;
 	}
 
@@ -59,6 +58,7 @@ class Evaluator {
 			if (typeof fn === 'function') {
 				return fn(...args);
 			}
+			// To-do: user defined functions
 		}
 
 		throw `Unimplemented: ${JSON.stringify(exp)}`;
@@ -80,6 +80,30 @@ class Evaluator {
 		return typeof exp === 'string' && /^[+\-*/<>=a-zA-Z0-9_]+$/.test(exp);
 	}
 }
+// default env
+
+function minus(op1, op2 = null) {
+	if (op2 == null) return -op1;
+	return op1 - op2;
+}
+
+const internal = [
+	['null', null],
+	['true', true],
+	['false', false],
+	['VERSION', package.version],
+	['+', (op1, op2) => op1 + op2],
+	['*', (op1, op2) => op1 * op2],
+	['/', (op1, op2) => op1 / op2],
+	['=', (op1, op2) => op1 === op2],
+	['>', (op1, op2) => op1 > op2],
+	['>=', (op1, op2) => op1 >= op2],
+	['<', (op1, op2) => op1 < op2],
+	['<=', (op1, op2) => op1 <= op2],
+	['-', minus],
+	['print', (...args) => console.log(...args)],
+];
+ const GlobalEnvironment = new Environment(new Map(internal));
 
 
 module.exports = Evaluator;

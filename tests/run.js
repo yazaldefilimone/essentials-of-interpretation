@@ -15,4 +15,5 @@ const package = require('../package.json');
 
 const evaluator = new Evaluator();
 tests.forEach((test) => test(evaluator));
+evaluator.eva(['print', '"Hello,"', '"World!"'])
 console.log('All tests passed!');
