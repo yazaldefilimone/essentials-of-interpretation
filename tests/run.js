@@ -9,10 +9,7 @@ const whileTest = require('./while-test');
 const tests = [blockTest, mathTest, selfEvalTest, variablesTest, ifExpTest, whileTest];
 
 const Evaluator = require('../src/evaluator');
-const Environment = require('../src/environment');
-const package = require('../package.json');
 // Tests
-
 const evaluator = new Evaluator();
 tests.forEach((test) => test(evaluator));
 evaluator.eva(['print', '"Hello,"', '"World!"'])
