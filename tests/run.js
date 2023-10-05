@@ -5,12 +5,21 @@ const selfEvalTest = require('./self-eval-test');
 const variablesTest = require('./variables-test');
 const ifExpTest = require('./if-exp-test');
 const whileTest = require('./while-test');
+const userDefineFunction = require('./user-define-function-test');
 
-const tests = [blockTest, mathTest, selfEvalTest, variablesTest, ifExpTest, whileTest];
+const tests = [
+	blockTest,
+	mathTest,
+	selfEvalTest,
+	variablesTest,
+	ifExpTest,
+	whileTest,
+	userDefineFunction,
+];
 
 const Evaluator = require('../src/evaluator');
 // Tests
 const evaluator = new Evaluator();
 tests.forEach((test) => test(evaluator));
-evaluator.eva(['print', '"Hello,"', '"World!"'])
+evaluator.eva(['print', '"Hello,"', '"World!"']);
 console.log('All tests passed!');
