@@ -31,7 +31,8 @@ class Evaluator {
 		}
 
 		if (this._isVariableName(exp)) {
-			return env.lookup(exp);
+			const result = env.lookup(exp);
+			return result
 		}
 		// if exp
 
@@ -50,6 +51,19 @@ class Evaluator {
 			}
 			return result;
 		}
+
+		// user define func: (def name (x) ())
+
+		if(exp[0] === 'def'){
+			const [_tag, name, params, body] = exp;
+			const func = {
+				params,
+				body,
+				env
+			}
+			return env.define(name, func)
+		}
+
 		// functions calls
 
 		if (Array.isArray(exp)) {
@@ -58,12 +72,24 @@ class Evaluator {
 			if (typeof fn === 'function') {
 				return fn(...args);
 			}
+			const activationRecord = new Map();
+				fn.params.forEach((variable, position) => {
+					activationRecord.set(variable, args[position])
+				});
+				const funEnv = new Environment(activationRecord, fn.env);
+				return this._evalBody(fn.body, funEnv)
 			// To-do: user defined functions
 		}
 
 		throw `Unimplemented: ${JSON.stringify(exp)}`;
 	}
+	_evalBody(exp, env){
+		if(exp[0] === 'begin'){
+			return this._evalBlock(exp, env)
+		}
+			return this.eva(exp, env)
 
+	}
 	_evalBlock(exp, env) {
 		const [_tag, ...expressions] = exp;
 		return expressions.reduce((_, exp) => this.eva(exp, env), null);
