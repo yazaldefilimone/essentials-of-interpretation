@@ -6,6 +6,7 @@ const variablesTest = require('./variables-test');
 const ifExpTest = require('./if-exp-test');
 const whileTest = require('./while-test');
 const userDefineFunction = require('./user-define-function-test');
+const lambdaFunction = require('./lambda-function-test.js');
 
 const tests = [
 	blockTest,
@@ -15,6 +16,7 @@ const tests = [
 	ifExpTest,
 	whileTest,
 	userDefineFunction,
+  lambdaFunction
 ];
 
 const Evaluator = require('../src/evaluator');
