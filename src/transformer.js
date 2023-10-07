@@ -21,6 +21,29 @@ class Transformer {
 		}
 		return ifExp;
 	}
+
+	forToWhile(forExp) {
+		const [_tag, initialize, condition, increment, exp] = forExp;
+		const expBlock = ['begin', exp, increment];
+		const whileExp = ['while', condition, expBlock];
+		return ['begin', initialize, whileExp];
+	}
+	decrementToSet(decrementExp) {
+		const [_tag, name] = decrementExp;
+		return ['set', name, ['-', name, 1]];
+	}
+	incrementToSet(incrementExp) {
+		const [_tag, name] = incrementExp;
+		return ['set', name, ['+', name, 1]];
+	}
+	decrementAssignToSet(exp) {
+		const [_tag, name, value] = exp;
+		return ['set', name, ['-', name, value]];
+	}
+	incrementAssignToSet(exp) {
+		const [_tag, name, value] = exp;
+		return ['set', name, ['+', name, value]];
+	}
 }
 
 module.exports = Transformer;
