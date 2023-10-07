@@ -57,7 +57,7 @@ class Evaluator {
 
 		if (exp[0] === 'def') {
 			// JIT - transpile to variable declaration
-			return this.eva(this._transformer.transformDefToLambda(exp), env);
+			return this.eva(this._transformer.defToLambda(exp), env);
 		}
 		// lambda function
 		if (exp[0] === 'lambda') {
@@ -69,6 +69,12 @@ class Evaluator {
 			};
 		}
 
+		// switch
+
+		if (exp[0] == 'switch') {
+			const ifExp = this._transformer.switchToIf(exp);
+			return this.eva(ifExp, env);
+		}
 		// functions calls
 
 		if (Array.isArray(exp)) {
