@@ -1,19 +1,19 @@
 const assert = require('assert');
-const  test  = require('./test-utils');
+const test = require('./test-utils');
 
 module.exports = (evaluator) => {
 	// Number
-  const code =  `(begin
+	const code = `(begin
     (def square (x)
       (* x x)
     )
     (var x 10)
     (square 20)
   )
-  `
-  test(evaluator,code, 20 * 20)
-  // closure
-    const codeClosure =  `(begin
+  `;
+	test(evaluator, code, 20 * 20);
+	// closure
+	const codeClosure = `(begin
       (var global 10)
       (def calc (x y)
         (begin
@@ -29,11 +29,11 @@ module.exports = (evaluator) => {
       (print (+ "o resultado e: " result))
       result
   )
-  `
-  test(evaluator,codeClosure, 10 + 5 + 2 + 10)
+  `;
+	test(evaluator, codeClosure, 10 + 5 + 2 + 10);
 
-  // recursion
-  const recursion =  `(begin
+	// recursion
+	const recursion = `(begin
    (def recursion (x)
       (if (= x 1)
         1
@@ -42,9 +42,8 @@ module.exports = (evaluator) => {
    )
    (recursion 5)
   )
-  `
-  console.time('recursion')
-  test(evaluator,recursion, 120)
-  console.timeEnd('recursion')
-
+  `;
+	console.time('recursion');
+	test(evaluator, recursion, 120);
+	console.timeEnd('recursion');
 };
