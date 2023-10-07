@@ -31,8 +31,7 @@ class Evaluator {
 		}
 
 		if (this._isVariableName(exp)) {
-			const result = env.lookup(exp);
-			return result
+			return env.lookup(exp);
 		}
 		// if exp
 
@@ -54,14 +53,20 @@ class Evaluator {
 
 		// user define func: (def name (x) ())
 
-		if(exp[0] === 'def'){
+		if (exp[0] === 'def') {
 			const [_tag, name, params, body] = exp;
-			const func = {
+			// JIT - transpile to variable declaration
+			const varExp = ['var', name, ['lambda', params, body]]
+			return this.eva(varExp, env)
+		}
+		// lambda function
+		if (exp[0] === 'lambda') {
+			const [_tag, params, body] = exp;
+			return {
 				params,
 				body,
-				env
-			}
-			return env.define(name, func)
+				env,
+			};
 		}
 
 		// functions calls
@@ -72,23 +77,22 @@ class Evaluator {
 			if (typeof fn === 'function') {
 				return fn(...args);
 			}
+			//user defined functions
 			const activationRecord = new Map();
-				fn.params.forEach((variable, position) => {
-					activationRecord.set(variable, args[position])
-				});
-				const funEnv = new Environment(activationRecord, fn.env);
-				return this._evalBody(fn.body, funEnv)
-			// To-do: user defined functions
+			fn.params.forEach((variable, position) => {
+				activationRecord.set(variable, args[position]);
+			});
+			const funEnv = new Environment(activationRecord, fn.env);
+			return this._evalBody(fn.body, funEnv);
 		}
 
 		throw `Unimplemented: ${JSON.stringify(exp)}`;
 	}
-	_evalBody(exp, env){
-		if(exp[0] === 'begin'){
-			return this._evalBlock(exp, env)
+	_evalBody(exp, env) {
+		if (exp[0] === 'begin') {
+			return this._evalBlock(exp, env);
 		}
-			return this.eva(exp, env)
-
+		return this.eva(exp, env);
 	}
 	_evalBlock(exp, env) {
 		const [_tag, ...expressions] = exp;
@@ -129,7 +133,6 @@ const internal = [
 	['-', minus],
 	['print', (...args) => console.log(...args)],
 ];
- const GlobalEnvironment = new Environment(new Map(internal));
-
+const GlobalEnvironment = new Environment(new Map(internal));
 
 module.exports = Evaluator;
