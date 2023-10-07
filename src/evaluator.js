@@ -1,8 +1,10 @@
 const Environment = require('./environment');
+const Transformer = require('./transformer');
 const package = require('../package.json');
 class Evaluator {
 	constructor(globalEnv = GlobalEnvironment) {
 		this.globalEnv = globalEnv;
+		this._transformer = new Transformer();
 	}
 
 	eva(exp, env = this.globalEnv) {
@@ -54,10 +56,8 @@ class Evaluator {
 		// user define func: (def name (x) ())
 
 		if (exp[0] === 'def') {
-			const [_tag, name, params, body] = exp;
 			// JIT - transpile to variable declaration
-			const varExp = ['var', name, ['lambda', params, body]]
-			return this.eva(varExp, env)
+			return this.eva(this._transformer.transformDefToLambda(exp), env);
 		}
 		// lambda function
 		if (exp[0] === 'lambda') {
