@@ -75,8 +75,33 @@ class Evaluator {
 			const ifExp = this._transformer.switchToIf(exp);
 			return this.eva(ifExp, env);
 		}
-		// functions calls
+		// for
+		if (exp[0] == 'for') {
+			const whileExp = this._transformer.forToWhile(exp);
+			return this.eva(whileExp, env);
+		}
+		// increment
+		if (exp[0] == '++') {
+			const setExp = this._transformer.incrementToSet(exp);
+			return this.eva(setExp, env);
+		}
+		// increment and assign
+		if (exp[0] == '+=') {
+			const setExp = this._transformer.incrementAssignToSet(exp);
+			return this.eva(setExp, env);
+		}
+		// decrement
+		if (exp[0] == '--') {
+			const setExp = this._transformer.decrementToSet(exp);
+			return this.eva(setExp, env);
+		}
 
+		// decrement and assign
+		if (exp[0] == '-=') {
+			const setExp = this._transformer.decrementAssignToSet(exp);
+			return this.eva(setExp, env);
+		}
+		// functions calls
 		if (Array.isArray(exp)) {
 			const fn = this.eva(exp[0], env);
 			const args = exp.slice(1).map((ex) => this.eva(ex, env));
