@@ -4,17 +4,17 @@ module.exports = (evaluator) => {
 	//  blocks
 
 	assert.strictEqual(
-		evaluator.eva(['begin', ['var', 'x', 10], ['var', 'y', 20], ['+', ['*', 'x', 'y'], 30]]),
+		evaluator.eval(['begin', ['var', 'x', 10], ['var', 'y', 20], ['+', ['*', 'x', 'y'], 30]]),
 		230,
 	);
 
 	assert.strictEqual(
-		evaluator.eva(['begin', ['var', 'x', 10], ['begin', ['var', 'x', 20], 'x'], 'x']),
+		evaluator.eval(['begin', ['var', 'x', 10], ['begin', ['var', 'x', 20], 'x'], 'x']),
 		10,
 	);
 
 	assert.strictEqual(
-		evaluator.eva([
+		evaluator.eval([
 			'begin',
 			// main scop
 			['var', 'y', 2],

@@ -1,6 +1,8 @@
+const { createMap } = require('./utils');
+
 class Environment {
-	constructor(record = new Map(), parent = null) {
-		this.record = record;
+	constructor(record = {}, parent = null) {
+		this.record = createMap(record);
 		this.parent = parent;
 	}
 	define(name, value) {

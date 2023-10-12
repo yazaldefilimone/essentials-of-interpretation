@@ -2,7 +2,7 @@ const assert = require('assert');
 
 module.exports = (evaluator) => {
 	// Number
-	assert.strictEqual(evaluator.eva(1), 1);
+	assert.strictEqual(evaluator.eval(1), 1);
 	// String
-	assert.strictEqual(evaluator.eva('"Hello"'), 'Hello');
+	assert.strictEqual(evaluator.eval('"Hello"'), 'Hello');
 };

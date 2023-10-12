@@ -1,6 +1,5 @@
 const fs = require('fs/promises');
 const path = require('path');
-const exclude = ['run.js', 'test-utils.js'];
 const Evaluator = require('../src/evaluator');
 const bootstrap = async () => {
 	const all = await fs.readdir(path.resolve(__dirname));
@@ -8,7 +7,7 @@ const bootstrap = async () => {
 	const requires = testers.map((testPath) => require(path.resolve(__dirname, testPath)));
 	const evaluator = new Evaluator();
 	requires.forEach((test) => test(evaluator));
-	evaluator.eva(['print', '"Hello,"', '"World!"']);
+	evaluator.eval(['print', '"Hello,"', '"World!"']);
 	console.log('All tests passed!');
 };
 
