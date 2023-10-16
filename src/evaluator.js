@@ -155,11 +155,31 @@ class Evaluator {
 			return env.define(name, moduleEnv);
 		}
 		// import
+		// <import> <...express> <module>
 		if (exp[0] === 'import') {
-			const [_tag, name] = exp;
-			const expressions = this._importModule(name);
-			const moduleExpression = ['module', name, expressions];
-			return this.eval(moduleExpression, this.globalEnv);
+			let [_tag, expression, name] = exp;
+			if (!name) {
+				const moduleExpressions = this._importModule(expression);
+				return this.eval(['module', expression, moduleExpressions], this.globalEnv);
+			}
+			// performance: check if exist module
+			let local = env.internalLookup('name');
+			if (!local) {
+				const moduleExpressions = this._importModule(name);
+				local = this.eval(['module', name, moduleExpressions], this.globalEnv);
+			}
+			expression.forEach((name) => {
+				env.define(name, local.lookup(name));
+			});
+			return env;
+		}
+		//  exports
+		if (exp[0] === 'exports') {
+			const [_tag, ...expressions] = exp;
+			expressions.forEach((current) => {
+				env.define(current, env.lookup(current));
+			});
+			return;
 		}
 		// functions calls
 		if (Array.isArray(exp)) {
@@ -208,9 +228,8 @@ class Evaluator {
 		const bodyModule = fs.readFileSync(path.resolve(__dirname, 'modules', `${name}.eva`), {
 			encoding: 'utf-8',
 		});
-		const bodyParser = evaParser.parse(`(begin ${bodyModule})`);
 
-		return bodyParser;
+		return evaParser.parse(`(begin ${bodyModule})`);
 	}
 }
 // default env
