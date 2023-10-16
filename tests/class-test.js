@@ -1,6 +1,7 @@
 const test = require('./test-utils');
 
 module.exports = (evaluator) => {
+	// todo: implement static methods
 	const code = `
     (class Point null
       (begin
@@ -23,14 +24,15 @@ module.exports = (evaluator) => {
     (class Point3D Point
       (begin
         (def constructor (this x y z) 
-
           (begin
-                    ((prop (super Point3D) constructor) this x y)
-            (set (prop this z) z)))
+              ((prop (super Point3D) constructor) this x y)
+              (set (prop this z) z))
+            )
 
         (def calc (this)
           (+ ((prop (super Point3D) calc) this)
-             (prop this z)))
+             (prop this z))
+        )
       )
     )
 
