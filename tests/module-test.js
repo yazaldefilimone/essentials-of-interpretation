@@ -10,13 +10,13 @@ module.exports = (evaluator) => {
 	const expected = 10;
 	test(evaluator, code, expected);
 	const case_two = `
-  (var abs (prop Math abs))
+  (import (abs) Math)
   (abs (- 8))
-
   `;
 	test(evaluator, case_two, 8);
 	const code_three = `
-  (prop Math MAX_VALUE)
+  (import (MAX_VALUE abs) Math)
+  (abs (- MAX_VALUE))
   `;
 	test(evaluator, code_three, 1000);
 };
