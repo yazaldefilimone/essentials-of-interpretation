@@ -12,6 +12,9 @@ class Environment {
 	lookup(name) {
 		return this.resolve(name).record.get(name);
 	}
+	internalLookup(name) {
+		return this.internalResolve(name)?.record?.get(name) || null;
+	}
 	assign(name, value) {
 		this.resolve(name).record.set(name, value);
 	}
@@ -24,6 +27,15 @@ class Environment {
 			return this.parent.resolve(name);
 		}
 		throw ReferenceError(`Variable ${name} is not defined!`);
+	}
+	internalResolve(name) {
+		if (this.record.has(name)) {
+			return this;
+		}
+		if (this.parent !== null) {
+			return this.parent.resolve(name);
+		}
+		return null;
 	}
 }
 
