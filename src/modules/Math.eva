@@ -8,3 +8,8 @@
 )
 
 (var MAX_VALUE 1000)
+
+(exports 
+abs
+square
+)
