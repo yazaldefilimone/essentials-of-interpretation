@@ -1,14 +1,19 @@
 const Environment = require('./environment');
 const Transformer = require('./transformer');
+const evaParser = require('./parser');
+const fs = require('fs');
 const package = require('../package.json');
+const path = require('path');
+
 class Evaluator {
 	constructor(globalEnv = GlobalEnvironment) {
 		this.globalEnv = globalEnv;
 		this._transformer = new Transformer();
 	}
 	evalGlobal(expressions) {
-		return this._evalBlock(['block', expressions], this.globalEnv);
+		return this._evalBody(expressions, this.globalEnv);
 	}
+
 	eval(exp, env = this.globalEnv) {
 		if (this._isNumber(exp)) {
 			return exp;
@@ -122,8 +127,11 @@ class Evaluator {
 			const [_tag, name, ...params] = exp;
 			const classEnv = this.eval(name, env);
 			const instance = new Environment({}, classEnv);
-			const args = exp.slice(2).map((arg) => this.eval(arg, env));
-			this._callUserFunction(classEnv.lookup('constructor'), [instance, ...args]);
+			const args = [instance];
+			for (const arg of params) {
+				args.push(this.eval(arg, env));
+			}
+			this._callUserFunction(classEnv.lookup('constructor'), args);
 			return instance;
 		}
 		// prop: access methods in class
@@ -135,8 +143,23 @@ class Evaluator {
 		// super
 		if (exp[0] == 'super') {
 			const [_tag, className] = exp;
-			const { parent } = this.eval(className, env);
-			return parent;
+			return this.eval(className, env).parent;
+		}
+
+		//  module
+
+		if (exp[0] == 'module') {
+			const [_tag, name, body] = exp;
+			const moduleEnv = new Environment({}, env);
+			this._evalBody(body, moduleEnv);
+			return env.define(name, moduleEnv);
+		}
+		// import
+		if (exp[0] === 'import') {
+			const [_tag, name] = exp;
+			const expressions = this._importModule(name);
+			const moduleExpression = ['module', name, expressions];
+			return this.eval(moduleExpression, this.globalEnv);
 		}
 		// functions calls
 		if (Array.isArray(exp)) {
@@ -181,6 +204,14 @@ class Evaluator {
 	_isVariableName(exp) {
 		return typeof exp === 'string' && /^[+\-*/<>=a-zA-Z0-9_]*$/.test(exp);
 	}
+	_importModule(name) {
+		const bodyModule = fs.readFileSync(path.resolve(__dirname, 'modules', `${name}.eva`), {
+			encoding: 'utf-8',
+		});
+		const bodyParser = evaParser.parse(`(begin ${bodyModule})`);
+
+		return bodyParser;
+	}
 }
 // default env
 
@@ -205,7 +236,6 @@ const internal = {
 	'-': minus,
 	print: (...args) => console.log(...args),
 };
-
 const GlobalEnvironment = new Environment(internal);
 
 module.exports = Evaluator;
