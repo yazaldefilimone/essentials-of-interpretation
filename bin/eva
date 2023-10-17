@@ -1,0 +1,26 @@
+#!/usr/bin/env node
+
+'use strict';
+
+const fs = require('fs');
+const parser = require('../src/parser');
+const Evaluator = require('../src/evaluator');
+
+function evalGlobal(source, evaluator) {
+	const block = parser.parse(`(begin ${source})`);
+	return evaluator.evalGlobal(block);
+}
+function bootstrap(argv) {
+	const [_node, _path, mode, exp] = argv;
+	const evaluator = new Evaluator();
+
+	if (mode === '-e') {
+		return evalGlobal(exp, evaluator);
+	}
+	if (mode === '-f') {
+		const source = fs.readFileSync(exp, 'utf-8');
+		return evalGlobal(source, evaluator);
+	}
+}
+
+bootstrap(process.argv);
