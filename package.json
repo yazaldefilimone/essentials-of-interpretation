@@ -4,7 +4,7 @@
 	"description": "Building an Interpreter from scratch",
 	"main": "index.js",
 	"scripts": {
-		"start": "",
+		"start": "./bin/eva",
 		"test": "node --watch ./tests/run.js"
 	},
 	"repository": "git@github.com:yazaldefilimonepinto/essentials-of-interpretation.git",
